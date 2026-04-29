@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --color-brand-navy: #0F172A;
+  --color-brand-yellow: #FBBF24;
+  --color-brand-blue: #0EA5E9;
+  --color-brand-orange: #EA580C;
+  --color-brand-cream: #F5E6C8;
+  --color-brand-cream-light: #FAF2E4;
+  --color-brand-white: #FFFFFF;
+}
+
+@keyframes marquee-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes marquee-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+@keyframes marquee-down {
+  from { transform: translateY(-50%); }
+  to   { transform: translateY(0); }
+}
+
+.animate-marquee-left {
+  animation: marquee-left var(--duration, 20s) linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right var(--duration, 20s) linear infinite;
+}
+
+.animate-marquee-up {
+  animation: marquee-up var(--duration, 20s) linear infinite;
+}
+
+.animate-marquee-down {
+  animation: marquee-down var(--duration, 20s) linear infinite;
+}
+
+.pause-on-hover:hover .animate-marquee-left,
+.pause-on-hover:hover .animate-marquee-right,
+.pause-on-hover:hover .animate-marquee-up,
+.pause-on-hover:hover .animate-marquee-down {
+  animation-play-state: paused;
+}
+
+body {
+  background-color: var(--color-brand-cream-light);
+  color: var(--color-brand-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+}
+
+/* Testimonial plaque box — notched concave corners on desktop, simple rect on mobile */
+.testimonial-arch-box {
+  clip-path: url(#testimonial-arch-sides);
+}
+@media (max-width: 768px) {
+  .testimonial-arch-box {
+    clip-path: none;
+    border-radius: 1rem;
+  }
+}
