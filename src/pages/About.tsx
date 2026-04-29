@@ -60,7 +60,7 @@ export function About() {
 
         {/* Ornamental Divider */}
         <div className="flex justify-center py-12 md:py-20">
-          <img src="public/assets/divider2.png" alt="Ornament" className="h-8 md:h-12 opacity-80" />
+          <img src="/assets/divider2.png" alt="Ornament" className="h-8 md:h-12 opacity-80" />
         </div>
         {/* The Journey Section */}
 
@@ -74,7 +74,7 @@ export function About() {
             <motion.img
               animate={{ y: [0, -15, 0], rotate: [0, 2, -2, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              src="public/assets/Ornament3.png"
+              src="/assets/Ornament3.png"
               alt="Kulhad Chai"
               className="absolute -bottom-50 -right-10 md:-right-20 w-48 h-48 md:w-45 md:h-45 object-contain opacity-90 drop-shadow-2xl z-10 hidden sm:block"
             />
@@ -97,11 +97,11 @@ export function About() {
 
         {/* Quote Section with Side Ornaments */}
         <div className="py-16 md:py-24 flex items-center justify-center gap-4 md:gap-8 max-w-5xl mx-auto">
-          <img src="public/assets/Left_partition.png" alt="Left Ornament" className="h-12 md:h-24 opacity-80 shrink-0" />
+          <img src="/assets/Left_partition.png" alt="Left Ornament" className="h-12 md:h-24 opacity-80 shrink-0" />
           <h3 className="font-serif text-2xl md:text-3xl text-brand-navy text-center leading-relaxed italic">
             "There was never deprivation of having the chance to indulge in real, homemade food. My mom was an amazing cook, and I was so fortunate to have been able to grow up eating her meals. She put so much love and passion into everything she made. It wasn’t fancy, but it tasted so good!"
           </h3>
-          <img src="public/assets/right_partion.png" alt="Right Ornament" className="h-12 md:h-24 opacity-80 shrink-0" />
+          <img src="/assets/right_partion.png" alt="Right Ornament" className="h-12 md:h-24 opacity-80 shrink-0" />
         </div>
 
         {/* The Craft Section */}
@@ -112,7 +112,7 @@ export function About() {
             <motion.img
               animate={{ y: [0, 15, 0], rotate: [0, -2, 2, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              src="public/assets/Ornament1.png"
+              src="/assets/Ornament1.png"
               alt="Pani Puri"
               className="absolute -top-44 -left-10 md:-left-20 w-68 h-48 md:w-40 md:h-40 object-contain opacity-90 drop-shadow-2xl z-10 hidden sm:block"
             />
@@ -139,13 +139,13 @@ export function About() {
             </div>
           </div>
           <div className="order-1 lg:order-2 about-img rounded-3xl overflow-hidden h-[500px] md:h-[600px] shadow-2xl relative">
-            <img src="/assets/real_assets/kitchen001 2.png" alt="Cooking" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <img src="/assets/real_assets/kitchen001-2.png" alt="Cooking" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           </div>
         </div>
 
         {/* Bottom Ornamental Divider */}
         <div className="flex justify-center pt-20 md:pt-32">
-          <img src="public/assets/divider2_rev.png" alt="Ornament" className="h-8 md:h-12 opacity-80" />
+          <img src="/assets/divider2_rev.png" alt="Ornament" className="h-8 md:h-12 opacity-80" />
         </div>
 
       </div>

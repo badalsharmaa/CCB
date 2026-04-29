@@ -108,7 +108,7 @@ export function Catering() {
       <div className="relative min-h-[85vh] flex items-center pt-40 pb-32 overflow-hidden">
         <div className="hero-bg-reveal absolute inset-0 z-0">
           <img
-            src="public/assets/real_assets/storefront001.png"
+            src="/assets/real_assets/storefront001.png"
             alt="Catering Hero"
             className="w-full h-full object-cover"
           />
@@ -210,13 +210,13 @@ export function Catering() {
 
       {/* Ornamental Divider */}
       <div className="flex justify-center py-12">
-        <img src="public/assets/divider2.png" alt="Ornament" className="h-12 opacity-80" />
+        <img src="/assets/divider2.png" alt="Ornament" className="h-12 opacity-80" />
       </div>
 
       {/* Services Section */}
       <div className="services-section py-32 px-6 bg-brand-navy relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src="public/assets/real_assets/kitchen001 2.png" alt="Pattern" className="w-full h-full object-cover" />
+          <img src="/assets/real_assets/kitchen001-2.png" alt="Pattern" className="w-full h-full object-cover" />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
@@ -254,7 +254,7 @@ export function Catering() {
               <motion.img
                 animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
                 transition={{ duration: 5, repeat: Infinity }}
-                src="public/assets/Ornament1.png"
+                src="/assets/Ornament1.png"
                 className="absolute -bottom-10 -left-10 w-40 h-40 object-contain drop-shadow-2xl"
               />
             </div>
@@ -360,7 +360,7 @@ export function Catering() {
       </div>
 
       <div className="flex justify-center pb-24">
-        <img src="public/assets/divider2_rev.png" alt="Ornament" className="h-12 opacity-80" />
+        <img src="/assets/divider2_rev.png" alt="Ornament" className="h-12 opacity-80" />
       </div>
     </div>
   );

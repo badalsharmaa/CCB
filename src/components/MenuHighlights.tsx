@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 const MOODS = [
-  { name: "Street Food Cravings", image: "/assets/real_assets/mughlai001 2.png", color: "bg-brand-orange" },
+  { name: "Street Food Cravings", image: "/assets/real_assets/mughlai001-2.png", color: "bg-brand-orange" },
   { name: "Comfort Meal", image: "/assets/real_assets/food108.png", color: "bg-brand-blue" },
   { name: "Something Spicy", image: "/assets/real_assets/tandoori001.png", color: "bg-brand-yellow" },
   { name: "Late Night Indo-Chinese", image: "/assets/real_assets/food009.png", color: "bg-brand-navy" }
