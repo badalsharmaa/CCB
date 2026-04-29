@@ -63,7 +63,7 @@ export function MenuHighlights() {
                   className="absolute"
                   style={{
                     top: '-18%',
-                    left: 'calc(-6% - 1px)',
+                    left: 'calc(-11% - 1px)',
                     width: '112%',
                     height: '122%',
                     maskImage: 'url(/assets/image-mask.png)',
