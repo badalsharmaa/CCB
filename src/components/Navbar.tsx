@@ -93,6 +93,9 @@ export function Navbar({ isLight = false }: { isLight?: boolean }) {
           >
             <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-start justify-between pt-6">
               <Link to="/" className="flex-shrink-0 relative group">
+                {/* Focal point gradient background */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-radial-[at_center] from-white/60 via-white/20 to-transparent blur-3xl -z-10 group-hover:from-white/80 transition-all duration-700" />
+                
                 <img
                   src="/assets/logo.png"
                   alt="Calcutta Chaat & Bakery"
@@ -208,12 +211,15 @@ export function Navbar({ isLight = false }: { isLight?: boolean }) {
             <Link
               to="/"
               onClick={() => setIsDrawerOpen(false)}
-              className="absolute top-5 left-8 z-10 pointer-events-auto"
+              className="absolute top-5 left-8 z-10 pointer-events-auto group"
             >
+              {/* Focal point gradient background */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-radial-[at_center] from-white/40 via-white/10 to-transparent blur-3xl -z-10 group-hover:from-white/60 transition-all duration-700" />
+              
               <img
                 src="/assets/logo.png"
                 alt="Calcutta Chaat & Bakery"
-                className="h-20 w-auto object-contain"
+                className="h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
 

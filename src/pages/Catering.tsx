@@ -1,15 +1,34 @@
-import { useRef, useState, ChangeEvent } from 'react';
-import { motion } from 'motion/react';
+import React, { useRef, useState, ChangeEvent, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { CheckCircle, Phone, Mail, Users, Utensils, MapPin, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle, Phone, Mail, Users, Utensils, MapPin, ArrowRight, Sparkles, Loader2, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { escapeHtml, isReadable, isValidEmail, isValidName, isValidMessage } from '../utils/security';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function Catering() {
   const container = useRef<HTMLDivElement>(null);
-  const [eventDate, setEventDate] = useState('');
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    eventDate: '',
+    guests: '',
+    eventType: 'Corporate Gala',
+    message: '',
+    company: '', // Honeypot field
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [mountTime] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setTimeout(() => setCanSubmit(true), 3000); // 3s delay
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
@@ -26,7 +45,93 @@ export function Catering() {
         }
       }
     }
-    setEventDate(formattedValue);
+    setFormData({ ...formData, eventDate: formattedValue });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // 1. Honeypot check
+    if (formData.company) {
+      console.log('Bot detected: Honeypot filled');
+      setSubmitStatus('success');
+      return;
+    }
+
+    // 2. Time-based check
+    if (Date.now() - mountTime < 3000) {
+      setErrorMessage('Please wait a moment before submitting.');
+      setSubmitStatus('error');
+      return;
+    }
+
+    // 3. Validation
+    if (!isValidName(formData.fullName)) {
+      setErrorMessage('Please enter a valid name (2-50 characters).');
+      setSubmitStatus('error');
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setErrorMessage('Please enter a valid email address.');
+      setSubmitStatus('error');
+      return;
+    }
+    if (!formData.eventDate || formData.eventDate.length < 10) {
+      setErrorMessage('Please enter a valid date (MM/DD/YYYY).');
+      setSubmitStatus('error');
+      return;
+    }
+    if (!formData.guests || parseInt(formData.guests) < 1) {
+      setErrorMessage('Please enter a valid number of guests.');
+      setSubmitStatus('error');
+      return;
+    }
+    if (formData.message && !isValidMessage(formData.message)) {
+      setErrorMessage('Special requests must be between 20 and 500 characters.');
+      setSubmitStatus('error');
+      return;
+    }
+
+    // 4. Gibberish Detection
+    if (!isReadable(formData.fullName) || (formData.message && !isReadable(formData.message))) {
+      console.log('Bot detected: Gibberish input');
+      setSubmitStatus('success');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    // 5. Sanitization & Submission
+    const sanitizedData = {
+      fullName: escapeHtml(formData.fullName),
+      email: escapeHtml(formData.email),
+      eventDate: escapeHtml(formData.eventDate),
+      guests: escapeHtml(formData.guests),
+      eventType: escapeHtml(formData.eventType),
+      message: escapeHtml(formData.message),
+    };
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('Catering inquiry submitted:', sanitizedData);
+      setSubmitStatus('success');
+      setFormData({
+        fullName: '',
+        email: '',
+        eventDate: '',
+        guests: '',
+        eventType: 'Corporate Gala',
+        message: '',
+        company: '',
+      });
+    } catch (error) {
+      setErrorMessage('Failed to submit inquiry. Please try again later.');
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useGSAP(() => {
@@ -305,55 +410,145 @@ export function Catering() {
                 <Sparkles className="w-5 h-5 text-brand-orange" />
                 <h3 className="font-serif text-2xl text-brand-navy">Request a Consultation</h3>
               </div>
-              <form className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2 group">
-                    <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Full Name</label>
-                    <input type="text" className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" />
-                  </div>
-                  <div className="space-y-2 group">
-                    <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Email Address</label>
-                    <input type="email" className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2 group">
-                    <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Event Date</label>
-                    <input 
-                      type="text" 
-                      placeholder="MM/DD/YYYY"
-                      value={eventDate}
-                      onChange={handleDateChange}
-                      maxLength={10}
-                      className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" 
-                    />
-                  </div>
-                  <div className="space-y-2 group">
-                    <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Expected Guests</label>
-                    <input type="number" className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" />
-                  </div>
-                </div>
+              <AnimatePresence mode="wait">
+                {submitStatus === 'success' ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="py-12 flex flex-col items-center text-center space-y-6"
+                  >
+                    <div className="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/10">
+                      <CheckCircle2 className="w-12 h-12" />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-3xl text-brand-navy mb-2">Inquiry Received!</h3>
+                      <p className="text-brand-navy/60 max-w-sm mx-auto">Our catering concierge will review your details and reach out within 24 hours.</p>
+                    </div>
+                    <button 
+                      onClick={() => setSubmitStatus('idle')}
+                      className="px-8 py-3 bg-brand-navy text-white font-bold rounded-xl hover:bg-brand-orange transition-colors shadow-lg"
+                    >
+                      New Inquiry
+                    </button>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                    {/* Honeypot Field */}
+                    <div className="hidden">
+                      <input 
+                        type="text" 
+                        name="company" 
+                        value={formData.company} 
+                        onChange={(e) => setFormData({...formData, company: e.target.value})} 
+                        tabIndex={-1} 
+                        autoComplete="off" 
+                      />
+                    </div>
 
-                <div className="space-y-2 group">
-                  <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Event Type</label>
-                  <select className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium appearance-none bg-transparent">
-                    <option>Corporate Gala</option>
-                    <option>Wedding Celebration</option>
-                    <option>Private Soiree</option>
-                    <option>Other</option>
-                  </select>
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2 group">
+                        <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Full Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          value={formData.fullName}
+                          onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                          className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" 
+                        />
+                      </div>
+                      <div className="space-y-2 group">
+                        <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Email Address</label>
+                        <input 
+                          type="email" 
+                          required
+                          value={formData.email}
+                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" 
+                        />
+                      </div>
+                    </div>
 
-                <div className="space-y-2 group">
-                  <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Special Requests</label>
-                  <textarea rows={3} className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium resize-none"></textarea>
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2 group">
+                        <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Event Date</label>
+                        <input 
+                          type="text" 
+                          placeholder="MM/DD/YYYY"
+                          value={formData.eventDate}
+                          onChange={handleDateChange}
+                          required
+                          maxLength={10}
+                          className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" 
+                        />
+                      </div>
+                      <div className="space-y-2 group">
+                        <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Expected Guests</label>
+                        <input 
+                          type="number" 
+                          required
+                          value={formData.guests}
+                          onChange={(e) => setFormData({...formData, guests: e.target.value})}
+                          className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium" 
+                        />
+                      </div>
+                    </div>
 
-                <button type="button" className="w-full bg-brand-navy text-white font-bold text-sm tracking-[0.3em] py-5 rounded-2xl hover:bg-brand-orange transition-all shadow-xl shadow-brand-navy/10 hover:shadow-brand-orange/30 mt-8 uppercase">
-                  Submit Inquiry
-                </button>
-              </form>
+                    <div className="space-y-2 group">
+                      <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Event Type</label>
+                      <select 
+                        value={formData.eventType}
+                        onChange={(e) => setFormData({...formData, eventType: e.target.value})}
+                        className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium appearance-none bg-transparent"
+                      >
+                        <option>Corporate Gala</option>
+                        <option>Wedding Celebration</option>
+                        <option>Private Soiree</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-2 group">
+                      <label className="text-xs font-bold text-brand-navy uppercase tracking-[0.2em] opacity-50 group-focus-within:opacity-100 transition-opacity">Special Requests</label>
+                      <textarea 
+                        rows={3} 
+                        value={formData.message}
+                        onChange={(e) => setFormData({...formData, message: e.target.value})}
+                        placeholder="Any dietary restrictions or specific themes?"
+                        className="w-full bg-brand-cream/30 border-b-2 border-brand-navy/10 py-3 focus:border-brand-orange outline-none transition-all font-medium resize-none"
+                      ></textarea>
+                    </div>
+
+                    {submitStatus === 'error' && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-2 text-red-500 bg-red-50 p-4 rounded-xl text-sm border border-red-100"
+                      >
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <p>{errorMessage}</p>
+                      </motion.div>
+                    )}
+
+                    <div className="space-y-4">
+                      <button 
+                        type="submit" 
+                        disabled={isSubmitting || !canSubmit}
+                        className="w-full bg-brand-navy text-white font-bold text-sm tracking-[0.3em] py-5 rounded-2xl hover:bg-brand-orange transition-all shadow-xl shadow-brand-navy/10 hover:shadow-brand-orange/30 uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <>Submit Inquiry <ArrowRight className="w-4 h-4" /></>
+                        )}
+                      </button>
+                      {!canSubmit && (
+                        <p className="text-[10px] text-center text-brand-navy/40 uppercase tracking-tighter">Secure verification in progress...</p>
+                      )}
+                    </div>
+                  </form>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>

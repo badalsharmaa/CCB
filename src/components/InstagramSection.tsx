@@ -2,16 +2,16 @@ import { motion } from 'motion/react';
 import { Instagram } from 'lucide-react';
 
 const IG_POSTS = [
-  "/assets/real_assets/food057.png",
-  "/assets/real_assets/food103.png",
-  "/assets/real_assets/food014.png",
-  "/assets/real_assets/food067.png",
-  "/assets/real_assets/storefront001.png",
-  "/assets/real_assets/thali001.png",
-  "/assets/real_assets/food104.png",
-  "/assets/real_assets/food098.png",
-  "/assets/real_assets/food086.png",
-  "/assets/real_assets/food061.png"
+  { image: "/assets/insta_post/1.png", url: "https://www.instagram.com/reel/DXzu00WgGQv/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/2.png", url: "https://www.instagram.com/reel/DWJ6i44jNWp/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/3.png", url: "https://www.instagram.com/p/DXPp2mXE43h/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/4.png", url: "https://www.instagram.com/reel/DXgDHQiitMM/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/5.png", url: "https://www.instagram.com/reel/DXhx0rSivCt/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/6.png", url: "https://www.instagram.com/reel/DWhg_6zFPz5/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/7.png", url: "https://www.instagram.com/reel/DXxLLq_FL-7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/8.png", url: "https://www.instagram.com/p/DXpZzDajrJd/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/9.png", url: "https://www.instagram.com/reel/DXSOshXkosk/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+  { image: "/assets/insta_post/6.png", url: "https://www.instagram.com/reel/DWhg_6zFPz5/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" }
 ];
 
 export function InstagramSection() {
@@ -40,10 +40,16 @@ export function InstagramSection() {
           className="flex gap-4 min-w-max px-2"
         >
           {/* Duplicate array to create seamless loop */}
-          {[...IG_POSTS, ...IG_POSTS].map((img, i) => (
-            <div key={i} className="w-64 h-64 md:w-80 md:h-80 relative group rounded-2xl overflow-hidden flex-shrink-0 cursor-pointer shadow-lg border-4 border-brand-white">
+          {[...IG_POSTS, ...IG_POSTS].map((post, i) => (
+            <a 
+              key={i} 
+              href={post.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-64 aspect-[3/4] md:w-80 relative group rounded-2xl overflow-hidden flex-shrink-0 cursor-pointer shadow-lg border-4 border-brand-white"
+            >
               <img
-                src={img}
+                src={post.image}
                 alt="Instagram Post"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
@@ -51,7 +57,7 @@ export function InstagramSection() {
               <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
                 <Instagram className="w-10 h-10 text-brand-white transform scale-50 group-hover:scale-100 transition-transform duration-300" />
               </div>
-            </div>
+            </a>
           ))}
         </motion.div>
       </div>

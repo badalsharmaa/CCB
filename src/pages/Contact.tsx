@@ -1,8 +1,94 @@
-import { motion } from 'motion/react';
-import { MapPin, Phone, Mail, Send, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { MapPin, Phone, Mail, Send, Clock, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 import { HeadingWithDividers } from '../components/HeadingOrnament';
+import { escapeHtml, isReadable, isValidEmail, isValidName, isValidMessage } from '../utils/security';
 
 export function Contact() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: '',
+    company: '', // Honeypot field
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [mountTime] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setTimeout(() => setCanSubmit(true), 3000); // 3s delay
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // 1. Honeypot check
+    if (formData.company) {
+      console.log('Bot detected: Honeypot filled');
+      setSubmitStatus('success'); // Silent success for bots
+      return;
+    }
+
+    // 2. Time-based check
+    if (Date.now() - mountTime < 3000) {
+      setErrorMessage('Please wait a moment before submitting.');
+      setSubmitStatus('error');
+      return;
+    }
+
+    // 3. Validation
+    if (!isValidName(formData.firstName) || !isValidName(formData.lastName)) {
+      setErrorMessage('Please enter a valid name (2-50 characters).');
+      setSubmitStatus('error');
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setErrorMessage('Please enter a valid email address.');
+      setSubmitStatus('error');
+      return;
+    }
+    if (!isValidMessage(formData.message)) {
+      setErrorMessage('Message must be between 20 and 500 characters.');
+      setSubmitStatus('error');
+      return;
+    }
+
+    // 4. Gibberish Detection
+    if (!isReadable(formData.message) || !isReadable(formData.firstName)) {
+      console.log('Bot detected: Gibberish input');
+      setSubmitStatus('success'); // Silent success for bots
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    // 5. Sanitization & Submission
+    const sanitizedData = {
+      firstName: escapeHtml(formData.firstName),
+      lastName: escapeHtml(formData.lastName),
+      email: escapeHtml(formData.email),
+      message: escapeHtml(formData.message),
+    };
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('Form submitted:', sanitizedData);
+      setSubmitStatus('success');
+      setFormData({ firstName: '', lastName: '', email: '', message: '', company: '' });
+    } catch (error) {
+      setErrorMessage('Failed to send message. Please try again later.');
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-brand-cream-light font-sans overflow-hidden">
       {/* Hero Section */}
@@ -65,49 +151,118 @@ export function Contact() {
 
             <div className="relative z-10">
               <h2 className="font-serif text-3xl text-brand-navy mb-8">Send us a Message</h2>
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">First Name</label>
-                    <input 
-                      type="text" 
-                      placeholder="Rohit"
-                      className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all" 
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">Last Name</label>
-                    <input 
-                      type="text" 
-                      placeholder="Das"
-                      className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all" 
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">Email Address</label>
-                  <input 
-                    type="email" 
-                    placeholder="hello@example.com"
-                    className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">Your Message</label>
-                  <textarea 
-                    rows={5} 
-                    placeholder="Tell us what's on your mind..."
-                    className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all resize-none"
-                  ></textarea>
-                </div>
-                <button 
-                  type="button" 
-                  className="w-full py-4 bg-brand-orange text-white font-bold rounded-2xl hover:bg-brand-navy transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-brand-orange/20 group"
-                >
-                  <span className="tracking-widest uppercase text-sm">Send Message</span>
-                  <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                </button>
-              </form>
+              
+              <AnimatePresence mode="wait">
+                {submitStatus === 'success' ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="py-12 flex flex-col items-center text-center space-y-4"
+                  >
+                    <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center">
+                      <CheckCircle2 className="w-10 h-10" />
+                    </div>
+                    <h3 className="font-serif text-2xl text-brand-navy">Message Sent!</h3>
+                    <p className="text-brand-navy/60">Thank you for reaching out. We'll get back to you shortly.</p>
+                    <button 
+                      onClick={() => setSubmitStatus('idle')}
+                      className="text-brand-orange font-bold hover:underline"
+                    >
+                      Send another message
+                    </button>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Honeypot Field */}
+                    <div className="hidden">
+                      <input 
+                        type="text" 
+                        name="company" 
+                        value={formData.company} 
+                        onChange={(e) => setFormData({...formData, company: e.target.value})} 
+                        tabIndex={-1} 
+                        autoComplete="off" 
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">First Name</label>
+                        <input 
+                          type="text" 
+                          placeholder="Rohit"
+                          required
+                          value={formData.firstName}
+                          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                          className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">Last Name</label>
+                        <input 
+                          type="text" 
+                          placeholder="Das"
+                          required
+                          value={formData.lastName}
+                          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                          className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">Email Address</label>
+                      <input 
+                        type="email" 
+                        placeholder="hello@example.com"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest ml-1">Your Message</label>
+                      <textarea 
+                        rows={5} 
+                        placeholder="Tell us what's on your mind..."
+                        required
+                        value={formData.message}
+                        onChange={(e) => setFormData({...formData, message: e.target.value})}
+                        className="w-full bg-brand-cream-light/30 border border-brand-navy/10 rounded-2xl py-4 px-5 focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all resize-none"
+                      ></textarea>
+                    </div>
+
+                    {submitStatus === 'error' && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-2 text-red-500 bg-red-50 p-4 rounded-xl text-sm border border-red-100"
+                      >
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <p>{errorMessage}</p>
+                      </motion.div>
+                    )}
+
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting || !canSubmit}
+                      className="w-full py-4 bg-brand-orange text-white font-bold rounded-2xl hover:bg-brand-navy transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-brand-orange/20 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <>
+                          <span className="tracking-widest uppercase text-sm">Send Message</span>
+                          <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </>
+                      )}
+                    </button>
+                    {!canSubmit && (
+                      <p className="text-[10px] text-center text-brand-navy/40 uppercase tracking-tighter">Secure verification in progress...</p>
+                    )}
+                  </form>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
 

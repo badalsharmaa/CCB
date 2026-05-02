@@ -13,9 +13,12 @@ import { CATEGORIES, MENU_ITEMS } from '../data/menu';
 interface MenuItemCardProps {
   item: any;
   onAdd: (item: any) => void;
+  isFavorite: boolean;
+  onToggleFavorite: (id: number) => void;
+  onViewDetails: (item: any) => void;
 }
 
-const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAdd }) => {
+const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAdd, isFavorite, onToggleFavorite, onViewDetails }) => {
   const [isAdded, setIsAdded] = useState(false);
 
   const handleAdd = () => {
@@ -43,8 +46,11 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAdd }) => {
         </div>
 
         {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm">
-          <Heart className="w-4 h-4" />
+        <button 
+          onClick={() => onToggleFavorite(item.id)}
+          className={`absolute top-3 right-3 p-2 backdrop-blur-sm rounded-full transition-colors shadow-sm ${isFavorite ? 'bg-red-500 text-white' : 'bg-white/90 text-gray-400 hover:text-red-500'}`}
+        >
+          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
       </div>
       
@@ -58,7 +64,10 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAdd }) => {
       </div>
       
       <div className="mt-auto flex gap-2">
-        <button className="flex-1 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-bold rounded-xl transition-colors border border-gray-100">
+        <button 
+          onClick={() => onViewDetails(item)}
+          className="flex-1 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-bold rounded-xl transition-colors border border-gray-100"
+        >
           Details
         </button>
         <motion.button 
@@ -96,11 +105,39 @@ export function Order() {
   const [lastOrderId, setLastOrderId] = useState('');
   const [cardDetails, setCardDetails] = useState({ name: '', number: '', expiry: '', cvv: '' });
   const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [showPastOrders, setShowPastOrders] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [filterVeg, setFilterVeg] = useState(false);
+  const [filterSpicy, setFilterSpicy] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+
+  const toggleFavorite = (id: number) => {
+    setFavorites(prev => prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]);
+  };
 
   const filteredItems = MENU_ITEMS.filter(item => 
     (activeCategory === "All" || item.category === activeCategory) &&
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (!filterVeg || item.veg) &&
+    (!filterSpicy || item.spicy) &&
+    (!showFavoritesOnly || favorites.includes(item.id))
   );
+
+  const notifications = [
+    { id: 1, title: 'Order Delivered!', message: 'Your last order was delivered successfully.', time: '2h ago', icon: <CheckCircle2 className="w-4 h-4 text-green-500" /> },
+    { id: 2, title: 'New Promo Code', message: 'Use CHAT20 for 20% off on your next order.', time: '5h ago', icon: <Tag className="w-4 h-4 text-brand-orange" /> },
+    { id: 3, title: 'Menu Update', message: 'Check out our new Mango Lassi!', time: '1d ago', icon: <Star className="w-4 h-4 text-yellow-400" /> },
+  ];
+
+  const pastOrders = [
+    { id: 'ORD-8271', date: 'May 1, 2026', total: 42.50, itemsCount: 3, status: 'Delivered' },
+    { id: 'ORD-7162', date: 'Apr 28, 2026', total: 28.99, itemsCount: 2, status: 'Delivered' },
+    { id: 'ORD-6541', date: 'Apr 25, 2026', total: 15.40, itemsCount: 1, status: 'Delivered' },
+  ];
 
   const addToCart = (item: any) => {
     setCart(prev => {
@@ -207,18 +244,30 @@ export function Order() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-lg border border-gray-100 py-2 z-50"
+                  className="absolute left-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-lg border border-gray-100 py-2 z-50 overflow-hidden"
                 >
-                  <button onClick={() => setShowHamburgerMenu(false)} className="w-full flex items-center gap-3 px-4 py-2.5 text-brand-orange bg-brand-orange/10 font-bold text-sm">
+                  <button 
+                    onClick={() => { setShowHamburgerMenu(false); setShowFavoritesOnly(false); }} 
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 font-bold text-sm transition-colors ${!showFavoritesOnly ? 'text-brand-orange bg-brand-orange/10' : 'text-gray-600 hover:bg-gray-50'}`}
+                  >
                     <LayoutGrid className="w-4 h-4" /> Dashboard
                   </button>
-                  <button onClick={() => setShowHamburgerMenu(false)} className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 font-medium text-sm transition-colors">
-                    <Heart className="w-4 h-4" /> Favorites
+                  <button 
+                    onClick={() => { setShowHamburgerMenu(false); setShowFavoritesOnly(true); }} 
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 font-bold text-sm transition-colors ${showFavoritesOnly ? 'text-brand-orange bg-brand-orange/10' : 'text-gray-600 hover:bg-gray-50'}`}
+                  >
+                    <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} /> Favorites
                   </button>
-                  <button onClick={() => setShowHamburgerMenu(false)} className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 font-medium text-sm transition-colors">
+                  <button 
+                    onClick={() => { setShowHamburgerMenu(false); setShowPastOrders(true); }} 
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 font-medium text-sm transition-colors"
+                  >
                     <History className="w-4 h-4" /> Past Orders
                   </button>
-                  <button onClick={() => setShowHamburgerMenu(false)} className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 font-medium text-sm transition-colors">
+                  <button 
+                    onClick={() => { setShowHamburgerMenu(false); setShowSettings(true); }} 
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 font-medium text-sm transition-colors"
+                  >
                     <Settings className="w-4 h-4" /> Settings
                   </button>
                 </motion.div>
@@ -238,9 +287,37 @@ export function Order() {
               className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange transition-all"
             />
           </div>
-          <button className="p-2.5 bg-brand-orange/10 text-brand-orange hover:bg-brand-orange hover:text-white rounded-xl transition-colors">
-            <SlidersHorizontal className="w-5 h-5" />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowFilters(!showFilters)}
+              className={`p-2.5 rounded-xl transition-colors ${showFilters ? 'bg-brand-orange text-white' : 'bg-brand-orange/10 text-brand-orange hover:bg-brand-orange hover:text-white'}`}
+            >
+              <SlidersHorizontal className="w-5 h-5" />
+            </button>
+            <AnimatePresence>
+              {showFilters && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowFilters(false)} />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-3 px-4 z-50 space-y-3"
+                  >
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Filters</h4>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input type="checkbox" checked={filterVeg} onChange={() => setFilterVeg(!filterVeg)} className="accent-brand-orange" />
+                      <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">Vegetarian Only</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input type="checkbox" checked={filterSpicy} onChange={() => setFilterSpicy(!filterSpicy)} className="accent-brand-orange" />
+                      <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">Spicy Only</span>
+                    </label>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 lg:gap-6">
@@ -255,10 +332,47 @@ export function Order() {
             </span>
           </div>
 
-          <button className="p-2 hover:bg-gray-100 rounded-full relative transition-colors">
-            <Bell className="w-5 h-5 text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-brand-orange rounded-full border border-white"></span>
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="p-2 hover:bg-gray-100 rounded-full relative transition-colors"
+            >
+              <Bell className="w-5 h-5 text-gray-600" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-brand-orange rounded-full border border-white"></span>
+            </button>
+            <AnimatePresence>
+              {showNotifications && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 overflow-hidden"
+                  >
+                    <div className="px-4 py-2 border-b border-gray-50 flex items-center justify-between">
+                      <span className="font-bold text-gray-900">Notifications</span>
+                      <button className="text-xs text-brand-orange font-bold hover:underline">Mark all as read</button>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.map(n => (
+                        <div key={n.id} className="px-4 py-3 hover:bg-gray-50 transition-colors flex gap-3 border-b border-gray-50 last:border-0">
+                          <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
+                            {n.icon}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">{n.title}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
+                            <p className="text-[10px] text-gray-400 mt-1">{n.time}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
 
           {user ? (
             <div className="relative">
@@ -410,7 +524,14 @@ export function Order() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 pb-24 lg:pb-0">
             <AnimatePresence mode="popLayout">
               {filteredItems.map(item => (
-                <MenuItemCard key={item.id} item={item} onAdd={addToCart} />
+                <MenuItemCard 
+                  key={item.id} 
+                  item={item} 
+                  onAdd={addToCart} 
+                  isFavorite={favorites.includes(item.id)}
+                  onToggleFavorite={toggleFavorite}
+                  onViewDetails={setSelectedItem}
+                />
               ))}
             </AnimatePresence>
           </div>
@@ -628,6 +749,89 @@ export function Order() {
         )}
       </AnimatePresence>
 
+      {/* ── Item Detail Modal ─────────────────────────────────────────── */}
+      <AnimatePresence>
+        {selectedItem && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[80]"
+              onClick={() => setSelectedItem(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 40 }}
+              className="fixed inset-x-4 top-[10%] bottom-[10%] md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-[81] w-full md:w-[700px] bg-white md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row"
+            >
+              <button 
+                onClick={() => setSelectedItem(null)}
+                className="absolute top-6 right-6 p-2 bg-white/20 backdrop-blur-md hover:bg-white/40 rounded-full text-white z-10 transition-colors md:text-gray-400 md:bg-gray-100 md:hover:bg-gray-200"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              {/* Image Section */}
+              <div className="w-full md:w-1/2 h-64 md:h-auto relative bg-gray-100">
+                <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-full object-cover" />
+                <div className="absolute top-6 left-6 flex gap-2">
+                  {selectedItem.spicy && <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg"><Flame className="w-3 h-3" /> Spicy</span>}
+                  {selectedItem.veg && <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg"><Leaf className="w-3 h-3" /> Veg</span>}
+                </div>
+              </div>
+
+              {/* Content Section */}
+              <div className="flex-1 p-8 md:p-10 flex flex-col overflow-y-auto">
+                <div className="mb-6">
+                  <span className="text-brand-orange text-xs font-black uppercase tracking-widest mb-2 block">{selectedItem.category}</span>
+                  <h2 className="font-serif text-3xl md:text-4xl text-brand-navy mb-3 leading-tight">{selectedItem.name}</h2>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5 text-yellow-500 bg-yellow-50 px-2.5 py-1 rounded-lg">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span className="font-bold text-sm">{selectedItem.rating}</span>
+                    </div>
+                    <span className="text-gray-400 text-sm font-medium">{selectedItem.reviews} Verified Reviews</span>
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Description</h4>
+                  <p className="text-gray-600 leading-relaxed italic">
+                    "{selectedItem.description || "An authentic, freshly prepared dish featuring our signature spice blend and the finest local ingredients. Experience the true taste of Calcutta street food in every bite."}"
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Calories</p>
+                    <p className="font-bold text-gray-900">320 - 450 kcal</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Prep Time</p>
+                    <p className="font-bold text-gray-900">12 - 15 mins</p>
+                  </div>
+                </div>
+
+                <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between gap-6">
+                  <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase mb-1">Price</p>
+                    <p className="text-3xl font-black text-brand-orange">${selectedItem.price.toFixed(2)}</p>
+                  </div>
+                  <button 
+                    onClick={() => { addToCart(selectedItem); setSelectedItem(null); }}
+                    className="flex-1 py-4 bg-brand-navy text-white font-bold rounded-2xl hover:bg-brand-navy/90 transition-colors shadow-xl shadow-brand-navy/20 flex items-center justify-center gap-2"
+                  >
+                    Add to Cart <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* ── Demo Payment Modal ─────────────────────────────────────────── */}
       <AnimatePresence>
         {showPaymentModal && (
@@ -767,6 +971,132 @@ export function Order() {
                   <p className="text-center text-xs text-gray-400 mt-3">🔒 This is a demo — no real charge will be made</p>
                 </form>
               )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── Past Orders Modal ─────────────────────────────────────────── */}
+      <AnimatePresence>
+        {showPastOrders && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[70]"
+              onClick={() => setShowPastOrders(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed inset-x-4 top-[10%] bottom-[10%] md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-[71] w-full md:w-[600px] bg-[#F4F7FE] md:rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            >
+              <div className="p-6 bg-white border-b border-gray-100 flex items-center justify-between">
+                <h3 className="font-serif text-2xl text-brand-navy">Order History</h3>
+                <button onClick={() => setShowPastOrders(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                {pastOrders.map(order => (
+                  <div key={order.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-orange/30 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-hover:bg-brand-orange/5 group-hover:text-brand-orange transition-colors">
+                        <History className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">{order.id}</p>
+                        <p className="text-xs text-gray-500">{order.date} • {order.itemsCount} items</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-brand-navy text-lg">${order.total.toFixed(2)}</p>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{order.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="p-6 bg-white border-t border-gray-100">
+                <button onClick={() => setShowPastOrders(false)} className="w-full py-3 bg-brand-navy text-white font-bold rounded-xl">Close</button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── Settings Modal ────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {showSettings && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[70]"
+              onClick={() => setShowSettings(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed inset-x-4 top-[15%] bottom-[15%] md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-[71] w-full md:w-[500px] bg-white md:rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            >
+              <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                <h3 className="font-serif text-2xl text-brand-navy">Settings</h3>
+                <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-8 space-y-8">
+                <section>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Account Information</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                      <div className="w-12 h-12 rounded-full bg-brand-navy text-white flex items-center justify-center shrink-0">
+                        {user?.photoURL ? <img src={user.photoURL} className="w-full h-full rounded-full" /> : <User />}
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <p className="font-bold text-gray-900 truncate">{user?.displayName || 'Guest User'}</p>
+                        <p className="text-xs text-gray-500 truncate">{user?.email || 'Login to see details'}</p>
+                      </div>
+                      <button className="text-xs font-bold text-brand-orange hover:underline">Edit</button>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Preferences</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                      <div>
+                        <p className="font-bold text-sm text-gray-900">Email Notifications</p>
+                        <p className="text-xs text-gray-500">Receive order updates via email</p>
+                      </div>
+                      <div className="w-10 h-5 bg-green-500 rounded-full relative p-0.5 cursor-pointer">
+                        <div className="w-4 h-4 bg-white rounded-full absolute right-0.5" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                      <div>
+                        <p className="font-bold text-sm text-gray-900">SMS Updates</p>
+                        <p className="text-xs text-gray-500">Get text messages for delivery</p>
+                      </div>
+                      <div className="w-10 h-5 bg-gray-300 rounded-full relative p-0.5 cursor-pointer">
+                        <div className="w-4 h-4 bg-white rounded-full absolute left-0.5" />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Danger Zone</h4>
+                  <button onClick={() => { logout(); setShowSettings(false); }} className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl border border-red-100 hover:bg-red-100 transition-colors">
+                    Sign Out
+                  </button>
+                </section>
+              </div>
             </motion.div>
           </>
         )}
