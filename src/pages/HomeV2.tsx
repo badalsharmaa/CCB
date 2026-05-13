@@ -35,18 +35,13 @@ const locations = [
   {
     name: 'Milpitas',
     address: '81 S Main Street, Milpitas, CA 95035',
-    phone: '669-319-8966',
-  },
-  {
-    name: 'Santa Clara',
-    address: '1480 Halford Ave, Santa Clara, CA 95051',
-    phone: 'Opening hours vary',
+    phone: null,
   },
 ];
 
 const proofs = [
   '4.8-star local love',
-  'Three Bay Area locations',
+  'Two Bay Area locations',
   'Pickup, catering, and smart ordering',
 ];
 

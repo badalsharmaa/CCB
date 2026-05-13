@@ -306,12 +306,6 @@ export function Contact() {
                     className="text-brand-cream/80 leading-relaxed">
                     81 S Main Street<br/>Milpitas, CA 95035
                   </a>
-                  <a 
-                    href="tel:+16693198966" 
-                    className="inline-block font-bold text-white hover:text-brand-orange transition-colors mt-2"
-                  >
-                    (669) 319 8966
-                  </a>
                 </div>
               </div>
             </div>

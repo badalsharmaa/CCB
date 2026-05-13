@@ -44,8 +44,7 @@ function VDivider() {
 
 const LOCATIONS = [
   { name: 'Fremont',     addr: '4906 Paseo Padre Pkwy, CA 94555', phone: '(507) 419 4523', tel: '+15074194523' },
-  { name: 'Milpitas',    addr: '81 S Main Street, CA 95035',       phone: '(669) 319 8966', tel: '+16693198966' },
-  { name: 'Santa Clara', addr: '1480 Halford Ave, CA 95051',       phone: null,           tel: null },
+  { name: 'Milpitas',    addr: '81 S Main Street, CA 95035',       phone: null,           tel: null },
 ];
 
 const HOURS = [
@@ -132,7 +131,7 @@ export function Footer() {
                 className="h-[100px] w-auto object-contain mb-5"
               />
               <p className="text-[#5a3825]/65 text-[17px] leading-relaxed max-w-[220px]">
-                Authentic Bengali street food meets Silicon Valley. Three Bay Area locations, one soul.
+                Authentic Bengali street food meets Silicon Valley. Two Bay Area locations, one soul.
               </p>
               <div className="flex items-center gap-3 mt-6">
                 {[
