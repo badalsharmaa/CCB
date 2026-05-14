@@ -106,6 +106,18 @@ export function TestimonialSection() {
           </svg>
         </div>
 
+        {/* Circular Motif Alpona — centered background overlay */}
+        {/* <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
+          <motion.img 
+            src="/assets/footer-mandala.png" 
+            alt="" 
+            className="w-[500px] md:w-[600px] h-auto opacity-[0.05] brightness-0 invert"
+            aria-hidden="true"
+            // animate={{ rotate: 360 }}
+            // transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          />
+        </div> */}
+
         {/* Content */}
         <div className="px-8 md:px-20 py-20 relative z-10">
           <div className="flex flex-col items-center text-center mb-10">
