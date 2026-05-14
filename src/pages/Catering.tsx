@@ -277,49 +277,116 @@ export function Catering() {
         </div>
       </div>
 
-      {/* Why Choose Us */}
-      <div className="py-32 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="font-serif text-4xl md:text-6xl text-brand-navy mb-6">Unforgettable Service</h2>
-            <div className="w-24 h-1 bg-brand-orange mx-auto rounded-full mb-8"></div>
-            <p className="text-lg text-brand-navy/60 max-w-2xl mx-auto">
-              We don't just serve food; we create an immersive culinary journey that transports your guests to the bustling lanes of Kolkata.
+
+      {/* Why Choose Us - Redesigned */}
+
+      
+      <div className="py-32 px-6 bg-brand-cream relative overflow-hidden">
+        {/* Background Alpona Accents */}
+              <div className="flex justify-center py-12">
+        <img src="/assets/divider2.png" alt="Ornament" className="h-12 opacity-80" />
+      </div>
+        <div className="absolute top-20 -left-20 w-80 h-80 opacity-5 pointer-events-none rotate-12">
+          <img src="/assets/alpona/circular_motif.png" alt="" className="w-full h-full object-contain" />
+        </div>
+        <div className="absolute bottom-20 -right-20 w-96 h-96 opacity-5 pointer-events-none -rotate-12">
+          <img src="/assets/alpona/circular_motif.png" alt="" className="w-full h-full object-contain" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-24">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-3 mb-6"
+            >
+              <div className="w-8 h-[2px] bg-brand-orange"></div>
+              <span className="text-xs font-bold tracking-[0.4em] uppercase text-brand-orange">The Calcutta Standard</span>
+              <div className="w-8 h-[2px] bg-brand-orange"></div>
+            </motion.div>
+            
+            <h2 className="font-serif text-5xl md:text-7xl text-brand-navy mb-8 leading-tight">
+              Why Our <span className="italic text-brand-blue">Catering</span> Stands Apart
+            </h2>
+            
+            <p className="text-xl text-brand-navy/60 max-w-2xl mx-auto leading-relaxed font-light">
+              We don't just serve food; we orchestrate an immersive culinary journey that transports your guests to the vibrant soul of Bengal.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             {features.map((item, i) => {
               const Icon = item.icon;
               return (
                 <motion.div
                   key={item.title}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: i * 0.2, duration: 0.8, ease: "easeOut" }}
-                  className="bg-white p-12 rounded-[2.5rem] shadow-sm border border-brand-navy/5 hover:shadow-2xl transition-shadow duration-500 group relative overflow-hidden"
+                  transition={{ delay: i * 0.2, duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
+                  className={`relative group ${i === 1 ? 'md:translate-y-12' : ''}`}
                 >
-                  <div className={`absolute top-0 right-0 w-32 h-32 ${item.bg} rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700`}></div>
-                  <div className={`w-16 h-16 ${item.iconBg} rounded-2xl flex items-center justify-center mb-8 relative z-10`}>
-                    <Icon className={`w-8 h-8 ${item.iconColor}`} />
+                  <div className="bg-white/80 backdrop-blur-sm p-10 lg:p-12 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-brand-navy/5 hover:border-brand-orange/20 transition-all duration-500 h-full flex flex-col relative overflow-hidden group-hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] group-hover:-translate-y-2">
+                    
+                    {/* Hover Alpona reveal */}
+                    <div className="absolute -bottom-10 -right-10 w-40 h-40 opacity-0 group-hover:opacity-10 transition-all duration-700 rotate-45 group-hover:rotate-0 scale-50 group-hover:scale-100 pointer-events-none">
+                      <img src="/assets/alpona/circular_motif.png" alt="" className="w-full h-full object-contain" />
+                    </div>
+
+                    <div className="relative z-10">
+                      <div className={`w-20 h-20 ${item.iconBg} rounded-[2rem] flex items-center justify-center mb-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+                        <Icon className={`w-10 h-10 ${item.iconColor}`} />
+                      </div>
+                      
+                      <h3 className="font-serif text-3xl font-bold mb-6 text-brand-navy leading-tight">
+                        {item.title}
+                      </h3>
+                      
+                      <div className="w-12 h-1 bg-brand-yellow/40 mb-6 group-hover:w-24 transition-all duration-500"></div>
+                      
+                      <p className="text-brand-navy/60 leading-relaxed text-lg font-light">
+                        {item.desc}
+                      </p>
+                    </div>
+
+                    {/* Subtle numbering */}
+                    <span className="absolute top-8 right-10 text-8xl font-serif font-bold text-brand-navy/[0.03] pointer-events-none">
+                      0{i + 1}
+                    </span>
                   </div>
-                  <h3 className="font-serif text-2xl font-bold mb-4 text-brand-navy relative z-10">{item.title}</h3>
-                  <p className="text-brand-navy/60 leading-relaxed relative z-10">{item.desc}</p>
                 </motion.div>
               );
             })}
           </div>
         </div>
+
+        {/* Decorative Floating Ornament */}
+        <motion.div
+          animate={{ y: [0, -20, 0], rotate: [5, -5, 5] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -bottom-20 left-10 w-64 h-64 opacity-20 pointer-events-none hidden lg:block"
+        >
+          <img src="/assets/Ornament2.png" alt="" className="w-full h-full object-contain" />
+        </motion.div>
       </div>
 
-      {/* Ornamental Divider */}
-      <div className="flex justify-center py-12">
-        <img src="/assets/divider2.png" alt="Ornament" className="h-12 opacity-80" />
-      </div>
+
 
       {/* Services Section */}
       <div className="services-section py-32 px-6 bg-brand-navy relative overflow-hidden">
+        {/* Top Alpona Border */}
+        <div className="absolute top-0 left-0 w-full h-16 pointer-events-none z-20 overflow-hidden opacity-90">
+          <div className="w-full h-full bg-brand-yellow" style={{
+            maskImage: 'url("/assets/alpona/linear_border.png")',
+            WebkitMaskImage: 'url("/assets/alpona/linear_border.png")',
+            maskRepeat: 'repeat-x',
+            WebkitMaskRepeat: 'repeat-x',
+            maskSize: 'auto 100%',
+            WebkitMaskSize: 'auto 100%',
+          }}></div>
+        </div>
+
         <div className="absolute inset-0 opacity-10">
           <img src="/assets/real_assets/kitchen001-2.png" alt="Pattern" className="w-full h-full object-cover" />
         </div>
@@ -365,6 +432,18 @@ export function Catering() {
             </div>
           </div>
         </div>
+
+        {/* Bottom Alpona Border */}
+        <div className="absolute bottom-0 left-0 w-full h-16 pointer-events-none z-20 overflow-hidden opacity-90 rotate-180">
+          <div className="w-full h-full bg-brand-yellow" style={{
+            maskImage: 'url("/assets/alpona/linear_border.png")',
+            WebkitMaskImage: 'url("/assets/alpona/linear_border.png")',
+            maskRepeat: 'repeat-x',
+            WebkitMaskRepeat: 'repeat-x',
+            maskSize: 'auto 100%',
+            WebkitMaskSize: 'auto 100%',
+          }}></div>
+        </div>
       </div>
 
       {/* Lead Generation Form Area */}
@@ -375,7 +454,14 @@ export function Catering() {
         <div className="animate-form max-w-6xl mx-auto bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-brand-navy/5 relative z-10">
           <div className="flex flex-col lg:flex-row w-full">
             {/* Contact Info Side */}
-            <div className="bg-brand-navy text-white p-12 lg:w-2/5 flex flex-col justify-center relative overflow-hidden">
+            <div 
+              className="text-white p-12 lg:w-2/5 flex flex-col justify-center relative overflow-hidden"
+              style={{
+                backgroundImage: 'url("/assets/bg.png")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
               <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
               <div className="relative z-10">
                 <h3 className="font-serif text-4xl mb-8">Let's Craft Your <span className="italic text-brand-yellow">Perfect Menu</span></h3>
