@@ -16,7 +16,14 @@ const IG_POSTS = [
 
 export function InstagramSection() {
   return (
-    <section className="py-24 bg-brand-cream-light relative overflow-hidden border-t border-brand-navy/5">
+    <section 
+      className="py-24 bg-brand-cream-light relative overflow-hidden border-t border-brand-navy/5"
+      style={{
+        backgroundImage: 'url("/assets/bg12.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
       <div className="max-w-7xl mx-auto px-6 text-center mb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
