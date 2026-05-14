@@ -7,6 +7,7 @@ import { BlogSection } from '../components/BlogSection';
 import { InstagramSection } from '../components/InstagramSection';
 import { AIChatbotTeaser } from '../components/AIChatbotTeaser';
 import { SectionDivider } from '../components/SectionDivider';
+import { AlponaDivider } from '../components/AlponaDivider';
 
 export function Home() {
   return (
@@ -14,6 +15,7 @@ export function Home() {
       <Hero />
       <SectionDivider />
       <StoryTeaser />
+      <AlponaDivider color="#800000" height="h-20" />
       <MenuHighlights />
       <TestimonialSection />
       <div

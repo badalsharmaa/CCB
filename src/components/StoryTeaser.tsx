@@ -31,6 +31,11 @@ export function StoryTeaser() {
 
   return (
     <section ref={container} id="our-story" className="py-32 px-6 bg-brand-white relative overflow-hidden">
+      {/* Background Overlay Image */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
+        <img src="/assets/background.png" alt="" className="w-full h-full object-cover" />
+      </div>
+
       {/* Creative background element */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-brand-cream to-transparent"></div>
 
@@ -92,18 +97,18 @@ export function StoryTeaser() {
           <div className="absolute inset-0 bg-brand-yellow/20 rounded-full blur-3xl transform translate-x-10 translate-y-10 -z-10"></div>
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-6 mt-16">
-              <div className="story-img rounded-2xl overflow-hidden shadow-xl border-4 border-brand-white">
+              <div className="story-img paper-border overflow-hidden -rotate-2">
                 <img src="/assets/real_assets/food097.png" alt="Spices" className="w-full h-64 object-cover hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
               </div>
-              <div className="story-img rounded-2xl overflow-hidden shadow-xl border-4 border-brand-white">
+              <div className="story-img paper-border overflow-hidden rotate-2">
                 <img src="/assets/real_assets/food065.png" alt="Street Food" className="w-full h-48 object-cover hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
               </div>
             </div>
             <div className="space-y-6">
-              <div className="story-img rounded-2xl overflow-hidden shadow-xl border-4 border-brand-white">
+              <div className="story-img paper-border overflow-hidden rotate-3">
                 <img src="/assets/real_assets/food010.png" alt="Cooking" className="w-full h-56 object-cover hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
               </div>
-              <div className="story-img rounded-2xl overflow-hidden shadow-xl border-4 border-brand-white">
+              <div className="story-img paper-border overflow-hidden -rotate-1">
                 <img src="/assets/real_assets/cutlet002.png" alt="Indian Dish" className="w-full h-72 object-cover hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
               </div>
             </div>

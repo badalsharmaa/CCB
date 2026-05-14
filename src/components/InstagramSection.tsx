@@ -54,12 +54,36 @@ export function InstagramSection() {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
-                <Instagram className="w-10 h-10 text-brand-white transform scale-50 group-hover:scale-100 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-sm gap-4">
+                <div className="bg-gradient-to-tr from-[#833ab4] via-[#fd1d1d] to-[#fcb045] p-4 rounded-full shadow-2xl transform scale-50 group-hover:scale-100 transition-transform duration-300">
+                  <Instagram className="w-8 h-8 text-brand-white" />
+                </div>
+                <span className="text-brand-white font-bold text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                  View on Instagram
+                </span>
               </div>
             </a>
           ))}
         </motion.div>
+      </div>
+
+      {/* Standalone Instagram Button */}
+      <div className="mt-16 flex justify-center">
+        <motion.a
+          href="https://www.instagram.com/calcutta_chaat_bakery/"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="group relative px-10 py-5 rounded-full overflow-hidden transition-all duration-500 shadow-xl hover:shadow-brand-orange/20"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] transition-transform duration-500 group-hover:scale-110" />
+          <div className="relative flex items-center gap-3 text-brand-white font-bold uppercase tracking-[0.2em] text-sm">
+            <Instagram className="w-5 h-5" />
+            <span>Follow Our Journey</span>
+          </div>
+        </motion.a>
       </div>
     </section>
   );

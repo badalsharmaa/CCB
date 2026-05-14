@@ -39,20 +39,20 @@ export function HeadingWithDividers({
   invert?: boolean;
 }) {
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
+    <div className={`flex items-center justify-center gap-4 ${className}`}>
       <img
         src={`/assets/dividers/divider-${divider}.png`}
         alt=""
         aria-hidden="true"
-        className={`h-7 w-auto object-contain opacity-60 flex-shrink-0 hidden sm:block ${invert ? 'brightness-0 invert' : ''}`}
+        className={`h-7 w-auto object-contain opacity-60 flex-shrink-0 hidden lg:block ${invert ? 'brightness-0 invert' : ''}`}
         style={{ transform: 'scaleX(-1)' }}
       />
-      <span className="flex-shrink-0">{children}</span>
+      <div className="flex-1 min-w-0 text-center">{children}</div>
       <img
         src={`/assets/dividers/divider-${divider}.png`}
         alt=""
         aria-hidden="true"
-        className={`h-7 w-auto object-contain opacity-60 flex-shrink-0 hidden sm:block ${invert ? 'brightness-0 invert' : ''}`}
+        className={`h-7 w-auto object-contain opacity-60 flex-shrink-0 hidden lg:block ${invert ? 'brightness-0 invert' : ''}`}
       />
     </div>
   );

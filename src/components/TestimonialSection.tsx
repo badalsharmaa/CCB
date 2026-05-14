@@ -64,12 +64,17 @@ export function TestimonialSection() {
 
       {/* Wide plaque-shaped box */}
       <div
-        className="testimonial-arch-box mx-auto bg-brand-navy text-brand-white relative"
+        className="testimonial-arch-box mx-auto bg-brand-navy text-brand-white relative overflow-hidden"
         style={{
           maxWidth: '1600px',
           filter: 'drop-shadow(0 32px 80px rgba(15,23,42,0.35))',
         }}
       >
+        {/* Background Overlay Image */}
+        <div className="absolute inset-0 z-0 opacity-50 pointer-events-none mix-blend-screen">
+          <img src="/assets/bg.png" alt="" className="w-full h-full object-cover scale-110" />
+        </div>
+
         {/* Double border SVG overlay — two concentric plaque-outline strokes */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
